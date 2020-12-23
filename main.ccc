@@ -1,0 +1,26 @@
+#include  <ctime>	//To calculate FPS using time(0) - returns current time
+#include  "caliberate.h"	//contains functions which are called only once - 1.average brightness 2.Polygon Caliberation 3.Road Image finding
+CvCapture	* capture;	//The capture class captures video either from harddisk(.avi) or from camera
+IplImage 	* frameImg;	//contains every frame of the video
+uchar		* frameData;	//data of frameImg image
+IplImage	* g_image;		//gray image of frameImg, passed into cvFindContour function
+CvMemStorage* g_storage = cvCreateMemStorage(0);	//Memory storage for contours. Each contour corresponds to one vehicle.
+double dist(CvPoint2D32f x1, CvPoint2D32f x2)	//distance between two points x1 and x2
+{	return pow((double) (x1.x-x2.x)*(x1.x-x2.x) + (x1.y-x2.y)*(x1.y-x2.y) ,(double) .5); }
+int main() 
+{
+	capture = cvCaptureFromAVI( "F:\cam1.avi" );	//Video capture from harddisk(.avi) or from camera
+	IplImage* frameImg_origSize;	//image taken from camera feed in original size
+	frameImg = cvCreateImage(cvSize(WIDTH_SMALL, HEIGHT_SMALL),8,3);	//same image from camera feed but in smaller size for faster calculation
+	cvNamedWindow ( "out"	  , CV_WINDOW_AUTOSIZE);	//window to show output
+	cvNamedWindow ( "trackbar", CV_WINDOW_AUTOSIZE);	//Trackbars to change value of parameters
+	cvResizeWindow(	"trackbar", 300, 600		  );	//Resizing trackbar window for proper view of all the parameters
+	frameImg_origSize 	= cvQueryFrame( capture );	//Just to know original size of video
+	cvResize(frameImg_origSize, frameImg);	//Resize original frame into smaller frame for faster calculations
+	CvSize origSize = cvGetSize(frameImg_origSize);	//original size
+	cout<<"ORIG: size = "<<frameImg_origSize->width
+		<<" X "<<frameImg_origSize->height
+		<<" step "<<frameImg_origSize->widthStep
+		<<" nchannels "<<frameImg_origSize->nChannels<<endl;	//print original size: width, height, widthStep, no of channels.
+    
+    // FINISH & TRANSFER TO SERVER
